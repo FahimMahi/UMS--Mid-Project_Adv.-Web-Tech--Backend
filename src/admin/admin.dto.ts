@@ -1,4 +1,4 @@
-import { IsDate, IsEmail, IsInt, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsStrongPassword, Matches, Validate } from "class-validator";
+import { IsBoolean, IsDate, IsEmail, IsInt, IsNotEmpty, IsNumberString, IsOptional, IsPhoneNumber, IsString, IsStrongPassword, Matches, Validate } from "class-validator";
 
 export class AdminDTO{
     @IsNotEmpty({message: 'Please enter a valid name'}) 
@@ -52,7 +52,7 @@ export class CreateStudentDto {
 
     @IsNotEmpty()
     @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
-    nid: string;
+    nid: number;
     
     // @IsNotEmpty({ message: 'NID image is required' })
     // @Validate(FileSizeValidator, { message: 'NID image size must be no more than 2 MB' }) 
@@ -92,7 +92,7 @@ export class CreateTeacherDto {
     password:string;
     @IsNotEmpty()
     @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
-    nid: string;
+    nid: number;
 
 
 }
@@ -122,7 +122,10 @@ export class CreateStaffDto {
     password:string;
     @IsNotEmpty()
     @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
-    nid: string;
+    nid: number;
+
+    @IsNotEmpty()
+    filename:string;
 
 }
 
@@ -151,28 +154,60 @@ export class CreateAdminDto {
     password:string;
     @IsNotEmpty()
     @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
-    nid: string;
+    nid: number;
 
 }
 
 export class AdminInfo {
+    @IsOptional()
+    // @IsNotEmpty()
     @IsString()
-    name:string;
-    @IsInt()
-    id:number;
-    @IsString()
-    address:string;
-    @IsPhoneNumber()
-    phone:number;
-    @IsInt()
-    age:number;
-    @IsString()
-    @IsEmail()
-    email:string;
-    @IsString()
-    designation:string;
-    @IsStrongPassword()
-    password:string;
+    ad_name?: string | null;;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // ad_username:string;
+    
+    // @IsNotEmpty()
+    // @IsString()
+    // ad_address:string;
+    
+    @IsNotEmpty()
+    // @Matches(/^018-\d{8}$/, { message: 'Phone number must match format 018-xxxxxxxx' })
+    
+    @IsNumberString() 
+    ad_phoneNumber: string;
+    
+    // @IsNotEmpty()
+    // // @IsInt()
+    // ad_age:number;
+    
+    // @IsNotEmpty()
+    // @IsString()
+    // @IsEmail()
+    // // @Matches(/.*@.*\.xyz$/, { message: 'Email address must end with .xyz domain' })
+    // @Matches(/^.+@aiub\.edu$/, { message: 'Email address must belong to aiub.edu domain' })
+    // ad_email: string;
+    
+    // @IsNotEmpty()
+    // @IsString()
+    // ad_designation:string;
+
+    // @IsNotEmpty()
+    // // // @IsString()
+    // // @IsStrongPassword()
+    // ad_password: string;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    isActive: boolean = true; 
+
+    // @IsNotEmpty()
+    // @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
+    // ad_nid: number;
+    
+    // @IsNotEmpty()
+    // filename:string;
 }
 
 export class StudentInfo {

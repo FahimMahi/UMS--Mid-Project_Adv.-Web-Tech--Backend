@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { AdminDTO, AdminInfo, CreateAdminDto, CreateStaffDto, CreateStudentDto, CreateTeacherDto, StaffInfo, StudentInfo, TeacherInfo } from "./admin.dto";
+import { AdminEntity } from "./admin.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 
 @Injectable()
@@ -30,6 +33,9 @@ export class AdminService {
             "role": "ADMIN",
         }
     ]
+
+    constructor(@InjectRepository(AdminEntity) private adminRepo: Repository<AdminEntity>) {}
+
 
     findAll(role?: 'STUDENT' | 'STAFF' | 'ADMIN' | 'FACULTY') {
         if (role) {
@@ -108,4 +114,55 @@ export class AdminService {
     updateStaff(id:number, staffInfo:StaffInfo):object{
         return {message: "Updated Succesfully. ID NO: " + id};
     }    
+
+
+    async addAdmin(AdminDTO:AdminInfo):Promise<AdminEntity>{
+        // const res = await this.adminRepo.save(AdminDTO);
+        // return res;
+        return this.adminRepo.save(AdminDTO);
+    }
+    
+    async getAllAdminUsers(): Promise<AdminEntity[]> {
+        return this.adminRepo.find();
+    }
+
+    async getAdminUserById(id: number): Promise<AdminEntity> {
+        return await this.adminRepo.findOne({ where: { id } });
+    }
+
+    // async updateAdminUser(id: number, updatedadminUser: Partial<AdminEntity>): Promise<AdminEntity> 
+
+    async updateAdminUser(id: number, updatedadminUser: AdminInfo): Promise<AdminEntity> {
+        // await this.adminRepo.update(id, updatedadminUser);
+        const res = this.adminRepo.update(id, updatedadminUser);
+        return await this.adminRepo.findOneBy({id:id});
+    }
+    
+    getUsersByIdDetails(id: number): Promise<AdminEntity[]> {
+        return this.adminRepo.find({
+            select:{
+                ad_name:true,
+                // ad_username:true,
+                // ad_nid:true,
+                isActive:true,
+                ad_phoneNumber:true,
+            },
+            where:{
+                id:id,
+            },
+        });
+    }
+    
+    async deleteUser(id: number): Promise<void> {
+        console.log({message: "Deleted Succesfully. ID NO: " + id});
+        await this.adminRepo.delete(id);
+    }
+    async getUsersWithNullFullName(): Promise<AdminEntity[]> {
+        return await this.adminRepo.find({ where: { ad_name: null, isActive: true } });
+    }
+
+        
+    // async createAdmin(AdminDTO: AdminInfo): Promise<AdminEntity> {
+    //     return await this.adminRepo.save(AdminDTO);
+    // }
 }
