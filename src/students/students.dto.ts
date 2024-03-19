@@ -36,3 +36,14 @@ export class UpdateStudentsDto{
   @MinLength(8)
   password: string;
 }
+
+export class OfferedCoursesDto{
+  @IsNotEmpty()
+  courseCode: string;
+
+  @IsNotEmpty()
+  courseName: string;
+
+  @IsNotEmpty()
+  semister: string;
+}

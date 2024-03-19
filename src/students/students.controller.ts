@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CreateStudentsDto, UpdateStudentsDto } from './students.dto';
-import { StudentsEntity } from './students.entity';
+import { CreateStudentsDto, OfferedCoursesDto, UpdateStudentsDto } from './students.dto';
+import { OfferedCoursesEntity } from './offeredCourse/course.entity';
+
 
 @Controller('students')
 export class StudentsController {
@@ -19,5 +20,14 @@ export class StudentsController {
     return this.studentsService.updateStudents(id, updateStudent);
   }
 
-  
+  @Post('createcourse')
+  @UsePipes(ValidationPipe)
+  createCourse(@Body() createCourseDto: OfferedCoursesDto): Promise<OfferedCoursesDto> {
+    return this.studentsService.createCourse(createCourseDto);
+  }
+
+  @Get('offeredcourse/:semister')
+  searchCodeBySemister(@Param('semister') semister: string): Promise<OfferedCoursesEntity[]> {
+   return this.studentsService.searchCourseBySemister(semister);
+  }
 }
