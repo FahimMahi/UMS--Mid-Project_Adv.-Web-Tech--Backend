@@ -18,6 +18,15 @@ export class CreateStudentsDto{
   password: string;
 }
 
+export class RegisteredCourseDto{
+  @IsNotEmpty()
+  courseCode: string;
+
+  @IsNotEmpty()
+  courseName: string;
+}
+
+
 
 export class UpdateStudentsDto{
   @IsNotEmpty()

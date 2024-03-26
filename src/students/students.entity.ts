@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("students")
 export class StudentsEntity{
@@ -25,6 +25,31 @@ export class StudentsEntity{
   @Column()
   @MinLength(8)
   password: string;
+
+  @OneToMany(() => RegisteredCourse, (registerCourse)=> registerCourse.students)
+  registerCourse: RegisteredCourse[]
+}
+
+@Entity("registerCourse")
+export class RegisteredCourse{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseCode: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseName: string;
+
+  @Column({name: 'course_id'})
+  @IsNotEmpty()
+  courseId: number;
+
+  @ManyToOne(() => StudentsEntity, (students)=> students.registerCourse)
+  @JoinColumn({name: 'course_id'})
+  students: StudentsEntity
 }
 
 @Entity("courses")
@@ -94,3 +119,5 @@ export class OfferedClubs{
   @IsNotEmpty()
   clubDescription: string;
 }
+
+

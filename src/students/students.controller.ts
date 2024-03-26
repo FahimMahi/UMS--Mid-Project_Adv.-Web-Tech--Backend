@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
+import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity } from './students.entity';
 
 
@@ -56,5 +56,15 @@ export class StudentsController {
   @Get('findclubs')
   async findClubs(): Promise<OfferedClubs[]>{
     return this.studentsService.findClubs();
+  }
+
+  @Post('courseregistration')
+  registerCourse(@Body() registeredCourseDto: RegisteredCourseDto): Promise<RegisteredCourseDto> {
+  return this.studentsService.courseRegistration(registeredCourseDto)
+  }
+
+  @Get('findregisteredstudents')
+  async findRegisteredStudents() {
+    return this.studentsService.findRegisteredStudents();
   }
 }

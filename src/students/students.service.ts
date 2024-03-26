@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs  } from './students.entity';
+import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs, RegisteredCourse  } from './students.entity';
 import { Repository } from 'typeorm';
-import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
+import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 
 @Injectable()
 export class StudentsService {
@@ -10,6 +10,7 @@ export class StudentsService {
   @InjectRepository(ParkingEntity) private parkingRepo: Repository<ParkingEntity>,
   @InjectRepository(CoreCurriculam) private curriculamRepo: Repository<CoreCurriculam>,
   @InjectRepository(OfferedClubs) private offeredClubsRepo: Repository<OfferedClubs>,
+  @InjectRepository(RegisteredCourse) private registeredCourseRepo: Repository<RegisteredCourse>,
   ) {}
   
 
@@ -48,4 +49,17 @@ export class StudentsService {
   async findClubs(): Promise<OfferedClubs[]>{
     return this.offeredClubsRepo.find()
   }
+
+  courseRegistration(registeredCourseDto: RegisteredCourseDto) {
+    return this.registeredCourseRepo.save(registeredCourseDto);
+  }
+
+  async findRegisteredStudents() {
+    return await this.registeredCourseRepo.find({
+      relations: {
+        students: true,
+      }
+    })
+  }
+
 }
