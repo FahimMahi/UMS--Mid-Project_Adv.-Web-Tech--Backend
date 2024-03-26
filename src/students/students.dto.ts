@@ -55,3 +55,17 @@ export class ParkingDto{
   @IsNotEmpty()
   vehicle: string;
 }
+
+export class CoreCurriculamDto{
+  @IsNotEmpty()
+  courseCode: string;
+
+  @IsNotEmpty()
+  courseName: string;
+
+  @IsNotEmpty()
+  credit: number;
+
+  @IsNotEmpty()
+  semister: string;
+}

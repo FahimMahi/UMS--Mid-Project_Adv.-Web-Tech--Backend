@@ -58,3 +58,25 @@ export class ParkingEntity{
   @IsNotEmpty()
   vehicle: string;
 }
+
+@Entity("coreCourse")
+export class CoreCurriculam{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseCode: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseName: string;
+
+  @Column()
+  @IsNotEmpty()
+  credit: number;
+
+  @Column()
+  @IsNotEmpty()
+  semister: string;
+}
