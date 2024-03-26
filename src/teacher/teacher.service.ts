@@ -2,32 +2,11 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TeacherEntity } from "./teacher.entity";
 import { Like, Repository } from "typeorm";
-import { TeacherDTO, TeacherUpdateDTO } from "./teacher.DTO";
+import { TeacherDTO } from "./teacher.DTO";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class TeacherService{
-    async login(teacherDto: TeacherDTO) {
-        const data= await this.teacherRepo.findOneBy({email: teacherDto.email});
-        const result= await bcrypt.compare(teacherDto.password, data.password);
-        if(result) {
-            return true;
-        }
-        else {
-            return false;
-        } 
-    }
-    async updateUser(username: string, teacherDto: TeacherUpdateDTO): Promise<TeacherEntity> {
-    
-        const existingTeacher = await this.teacherRepo.findOne({ where: { username } });
-        if (!existingTeacher) {
-            throw new NotFoundException('Teacher not found');
-        }
-
-        Object.assign(existingTeacher, teacherDto);
-        return await this.teacherRepo.save(existingTeacher);
-    }
-
+export class TeacherService{    
     constructor(
         @InjectRepository(TeacherEntity) 
         private teacherRepo: Repository<TeacherEntity>
@@ -35,11 +14,6 @@ export class TeacherService{
 
     async getAllUsers(): Promise<TeacherEntity[]> {
         return this.teacherRepo.find();
-    }
-
-    async removeUserByUsername(username: string): Promise<void> {
-        const user = await this.getUserByUsername(username);
-        await this.teacherRepo.remove(user);
     }
     
     async getUserByUsername(username: string): Promise<TeacherEntity> {
@@ -58,7 +32,7 @@ export class TeacherService{
         });
     }
 
-    async createUser(teacherDto: TeacherDTO): Promise<TeacherEntity> {
+    async createUser(teacherDto: TeacherDTO): Promise<TeacherEntity[]> {
         const existingUser = await this.teacherRepo.findOne({
             where: [{ username: teacherDto.username }, { email: teacherDto.email }]
         });
@@ -66,9 +40,47 @@ export class TeacherService{
         if (existingUser) {
             throw new Error('Username or email already exists');
         }
-        const newUser = this.teacherRepo.create(teacherDto);
-        return await this.teacherRepo.save(newUser);
-    }    
+
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(teacherDto.password, salt)
+        teacherDto.password= hashedPassword;
+        await this.teacherRepo.save(teacherDto);
+        return this.teacherRepo.find();
+    }
+    
+    async updateUser(username: string, teacherDto: TeacherDTO): Promise<TeacherEntity> {
+    
+        const existingTeacher = await this.teacherRepo.findOne({ where: { username } });
+        if (!existingTeacher) {
+            throw new NotFoundException('Teacher not found');
+        }
+        if (teacherDto.password) {
+            const salt = await bcrypt.genSalt();
+            const hashedPassword = await bcrypt.hash(teacherDto.password, salt);
+            teacherDto.password = hashedPassword;
+        }
+        Object.assign(existingTeacher, teacherDto);
+        return await this.teacherRepo.save(existingTeacher);
+    }
+
+    async removeUserByUsername(username: string): Promise<void> {
+        const userToRemove = await this.teacherRepo.findOne({ where: { username } });
+        if (!userToRemove) {
+            throw new Error('User not found');
+        }
+        await this.teacherRepo.remove(userToRemove);
+    }
+
+    async login(teacherDto: TeacherDTO) {
+        const data= await this.teacherRepo.findOneBy({email: teacherDto.email});
+        const result= await bcrypt.compare(teacherDto.password, data.password);
+        if(result) {
+            return true;
+        }
+        else {
+            return false;
+        } 
+    }
 
 
 

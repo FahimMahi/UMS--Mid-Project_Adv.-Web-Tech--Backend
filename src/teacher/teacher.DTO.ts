@@ -22,7 +22,7 @@ export class TeacherDTO{
     @IsNotEmpty({message: 'Please enter a valid education department'}) 
     department: string;
 
-    @Matches(/\.pdf$/, { message: 'File must contain .pdf extension' })
+    //@Matches(/\.pdf$/, { message: 'File must contain .pdf extension' })
     uploadCV: string;
 
     @IsNotEmpty({message: 'Please enter your address'}) 
@@ -35,11 +35,10 @@ export class TeacherDTO{
     isActive: boolean;
 }
 
-export class TeacherUpdateDTO{
-    fullName: string;
+export class TeacherLoginDTO {
+    @IsNotEmpty({ message: 'Email cannot be empty' })
     email: string;
+    @IsNotEmpty({ message: 'Password cannot be empty' })
     password: string;
-    department: string;
-    phoneNumber: string;
 }
     

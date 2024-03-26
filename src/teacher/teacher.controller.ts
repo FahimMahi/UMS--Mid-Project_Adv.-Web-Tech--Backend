@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, Session, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Res, Session, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { TeacherService } from "./teacher.service";
 import { TeacherDTO } from "./teacher.DTO";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
+import { SessionGuard } from "./teacher.session.guard";
 
 @Controller('teacher')
 export class TeacherController{
@@ -29,21 +30,35 @@ export class TeacherController{
 
 
     @Get('/allUsers')
+    //@UseGuards(SessionGuard)
     async getAllUsers() {
         return this.teacherService.getAllUsers();
     }
+
+    @Get('/getUser/:username')
+    @UseGuards(SessionGuard)
+    async getUserByUsername(@Param('username') username: string) {
+        return this.teacherService.getUserByUsername(username);
+    }
+
+    @Get('/search/:substring')
+    @UseGuards(SessionGuard)
+    async getUsersBySubstring(@Param('substring') substring: string) {
+      return this.teacherService.getUsersBySubstring(substring);
+    }
     
-    @Post('upload')
-    @UseInterceptors(FileInterceptor('myfile',
+    @Post('uploadCV')
+    @UseGuards(SessionGuard)
+    @UseInterceptors(FileInterceptor('file',
     { 
         fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg|pdf)$/))
             cb(null, true);
         else {
             cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
         },
-        limits: { fileSize: 30000 },
+        limits: { fileSize: 400000 },
         storage:diskStorage({
             destination: './upload',
             filename: function (req, file, cb) {
@@ -53,25 +68,31 @@ export class TeacherController{
     }
     ))
     uploadFile(@UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('CV is required');
+        }
         console.log(file);
     }
     
-    @Get('/getimage/:name')
+    @Get('/getCV/:name')
     getImages(@Param('name') name:string, @Res() res) {
         res.sendFile(name,{ root: './upload' })
     }
-    @Post('/createUser')
+
+
+    @Post('/addUser')
+    //@UseGuards(SessionGuard)
     @UsePipes(new ValidationPipe())
-    @UseInterceptors(FileInterceptor('profilepic',
+    @UseInterceptors(FileInterceptor('uploadCV',
     {
         fileFilter: (req, file, cb) => {
-            if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+            if (file.originalname.match(/^.*\.(pdf)$/))
                 cb(null, true);
             else {
                 cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
             }
         },
-        limits: { fileSize: 30000 },
+        limits: { fileSize: 400000 },
         storage:diskStorage({
         destination: './upload',
             filename: function (req, file, cb) {
@@ -80,42 +101,92 @@ export class TeacherController{
         })
     }
     ))
-    async createUser(@Body() teacherDto:TeacherDTO) {
-        return this.teacherService.createUser(teacherDto);
-    }
-
-    @Get('/search/:substring')
-    async getUsersBySubstring(@Param('substring') substring: string) {
-      return this.teacherService.getUsersBySubstring(substring);
-    }
-
-    @Get('/getUser/:username')
-    async getUserByUsername(@Param('username') username: string) {
-        return this.teacherService.getUserByUsername(username);
+    async createUser(@Body() teacherDto: TeacherDTO, @UploadedFile()  myfile: Express.Multer.File) {
+        teacherDto.uploadCV = myfile.filename;
+        //console.log(myfile);
+        try {
+            const result = await this.teacherService.createUser(teacherDto);
+            return { message: "Teacher created Successfully", result };
+        } 
+        catch (error) {
+            throw new HttpException(
+                {
+                  status: HttpStatus.BAD_REQUEST,
+                  error: 'Failed to create teacher.',
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Put('/updateUser/:username')
+    @UseGuards(SessionGuard)
+    @UsePipes(new ValidationPipe())
     async updateUser(@Param('username') username: string, @Body() teacherDto: TeacherDTO) {
-        return this.teacherService.updateUser(username, teacherDto);
+        try{
+            const result = await this.teacherService.updateUser(username, teacherDto);
+            return  { message: "User updated Successfully", result};
+        }
+        catch (error) {
+            throw new HttpException(
+                {
+                  status: HttpStatus.FORBIDDEN,
+                  error: 'Failed to Update.',
+                },
+                HttpStatus.FORBIDDEN,
+              );
+        }
     }
 
-    @Delete('/removeUser/:username')
-    async removeUserByUsername(@Param('username') username: string) {
+    @Delete('deleteUser/:username')
+    @UseGuards(SessionGuard)
+    removeUserByUsername(@Param('username') username: string): Promise<void> {
         return this.teacherService.removeUserByUsername(username);
     }
 
     @Post('login')
-    async login(@Body() teacherDto:TeacherDTO, 
-    @Session() session)
-    {
-        if(await this.teacherService.login(teacherDto))
-        {
-            session.email=teacherDto.username;
-            return true;
+    async login(@Session() session, @Body() teacherDto: TeacherDTO){
+        try {
+            const result = await this.teacherService.login(teacherDto);
+            console.log(result);
+            if (result === true) {
+                session.email = teacherDto.email;
+                console.log(session.email);
+                return {success: true, message: "User Login Successful." };
+            } 
+            else {
+              return {success: false, message: "Invalid email or password." };
+            }
+        } 
+        catch (error) {
+            throw new HttpException(
+            {
+                status: HttpStatus.BAD_REQUEST,
+                error: 'Login Failed',
+            },
+                HttpStatus.BAD_REQUEST,
+            );
         }
-        else
-        {
-            throw new HttpException('UnauthorizedException', HttpStatus.UNAUTHORIZED); 
+    }
+
+    @Get('logout')
+    logout(@Session() session) {
+        try {
+            if (session.email) {
+                session.destroy();
+                return { message: "logged out." };
+            }
+            else {
+                return { message: "Already logged out...Please login" };
+            }
+        }
+        catch (error) {
+            throw new HttpException({
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                error: 'error occurred in logout.',
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }
