@@ -123,4 +123,18 @@ export class OfferedClubs{
   clubDescription: string;
 }
 
+@Entity("joinClub")
+export class JoinCLub{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  userName: string;
+
+  @Column()
+  @IsNotEmpty()
+  clubName: string;
+}
+
 

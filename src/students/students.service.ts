@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs, RegisteredCourse  } from './students.entity';
+import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs, RegisteredCourse, JoinCLub  } from './students.entity';
 import { Repository } from 'typeorm';
-import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
+import { CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 
 @Injectable()
 export class StudentsService {
@@ -11,6 +11,7 @@ export class StudentsService {
   @InjectRepository(CoreCurriculam) private curriculamRepo: Repository<CoreCurriculam>,
   @InjectRepository(OfferedClubs) private offeredClubsRepo: Repository<OfferedClubs>,
   @InjectRepository(RegisteredCourse) private registeredCourseRepo: Repository<RegisteredCourse>,
+  @InjectRepository(JoinCLub) private joinClubRepo: Repository<JoinCLub>,
   ) {}
   
 
@@ -65,6 +66,10 @@ export class StudentsService {
 
   checkCourseStatus(): Promise<RegisteredCourse[]> {
     return this.registeredCourseRepo.find({ where: { CourseStatus: 'Invalid' } });
+  }
+
+  joinClub(joinClubDto: JoinClub) {
+    return this.joinClubRepo.save(joinClubDto);
   }
 
 

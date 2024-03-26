@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
+import { CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity, RegisteredCourse } from './students.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
@@ -35,12 +35,14 @@ export class StudentsController {
   }
 
   @Post('applyparking')
-    applyParking(@Body() parking: ParkingDto): Promise<ParkingDto>{
-      return this.studentsService.applyParking(parking);
+  @UsePipes(ValidationPipe)
+  applyParking(@Body() parking: ParkingDto): Promise<ParkingDto>{
+    return this.studentsService.applyParking(parking);
     
   }
 
   @Post('createcurriculam')
+  @UsePipes(ValidationPipe)
   createCuriculam(@Body() createCuriculam: CoreCurriculamDto): Promise<CoreCurriculamDto>{
     return this.studentsService.coreCurriculam(createCuriculam);
   }
@@ -61,6 +63,7 @@ export class StudentsController {
   }
 
   @Post('courseregistration')
+  @UsePipes(ValidationPipe)
   registerCourse(@Body() registeredCourseDto: RegisteredCourseDto): Promise<RegisteredCourseDto> {
   return this.studentsService.courseRegistration(registeredCourseDto)
   }
@@ -81,9 +84,9 @@ export class StudentsController {
             cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
         },
-        limits: { fileSize: 10 * 1024 * 1024 },
+        limits: { fileSize: 60000000 },
         storage:diskStorage({
-        destination: './students/uploads',
+        destination: './src/students/uploads',
         filename: function (req, file, cb) {
             cb(null,Date.now()+file.originalname)
         },
@@ -98,12 +101,18 @@ export class StudentsController {
 
     @Get('/viewassignment/:name')
     getImages(@Param('name') name:string, @Res() res) {
-        res.sendFile(name,{ root: './students/uploads' })
+        res.sendFile(name,{ root: './src/students/uploads' })
     }
 
     @Get('checkstatus')
-  getUsersWithDefaultCountry(): Promise<RegisteredCourse[]> {
+    getUsersWithDefaultCountry(): Promise<RegisteredCourse[]> {
     return this.studentsService.checkCourseStatus();
+  }
+
+  @Post('joinclub')
+  @UsePipes(ValidationPipe)
+  joinClub(@Body() joinClubDto: JoinClub): Promise<JoinClub> {
+    return this.studentsService.joinClub(joinClubDto);
   }
 
 

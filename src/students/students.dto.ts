@@ -86,3 +86,11 @@ export class OfferedClubsDto{
   @IsNotEmpty()
   clubDescription: string;
 }
+
+export class JoinClub{
+  @IsNotEmpty()
+  userName: string;
+
+  @IsNotEmpty()
+  clubName: string;
+}
