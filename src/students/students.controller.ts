@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
-import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity } from './students.entity';
+import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity, RegisteredCourse } from './students.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 
@@ -100,5 +100,11 @@ export class StudentsController {
     getImages(@Param('name') name:string, @Res() res) {
         res.sendFile(name,{ root: './students/uploads' })
     }
+
+    @Get('checkstatus')
+  getUsersWithDefaultCountry(): Promise<RegisteredCourse[]> {
+    return this.studentsService.checkCourseStatus();
+  }
+
 
 }

@@ -43,6 +43,9 @@ export class RegisteredCourse{
   @IsNotEmpty()
   courseName: string;
 
+  @Column({default: 'Invalid'})
+  CourseStatus: string;
+
   @Column({name: 'course_id'})
   @IsNotEmpty()
   courseId: number;

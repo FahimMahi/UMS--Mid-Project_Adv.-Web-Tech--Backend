@@ -62,4 +62,10 @@ export class StudentsService {
     })
   }
 
+
+  checkCourseStatus(): Promise<RegisteredCourse[]> {
+    return this.registeredCourseRepo.find({ where: { CourseStatus: 'Invalid' } });
+  }
+
+
 }
