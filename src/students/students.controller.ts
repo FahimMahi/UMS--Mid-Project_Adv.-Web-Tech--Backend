@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
+import { AppointmentDto, CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity, RegisteredCourse } from './students.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
@@ -115,5 +115,9 @@ export class StudentsController {
     return this.studentsService.joinClub(joinClubDto);
   }
 
-
+  @Post('appointment')
+  @UsePipes(ValidationPipe)
+  createAppointment(@Body() appointmentDto: AppointmentDto): Promise<AppointmentDto>{
+    return this.studentsService.createAppointment(appointmentDto);
+  }
 }

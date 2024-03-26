@@ -94,3 +94,14 @@ export class JoinClub{
   @IsNotEmpty()
   clubName: string;
 }
+
+export class AppointmentDto{
+  @IsNotEmpty()
+  userName: string;
+
+  @IsNotEmpty()
+  teacherName: string;
+
+  @IsNotEmpty()
+  date: Date;
+}

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs, RegisteredCourse, JoinCLub  } from './students.entity';
+import { StudentsEntity, OfferedCoursesEntity, ParkingEntity, CoreCurriculam, OfferedClubs, RegisteredCourse, JoinCLub,  Appointment  } from './students.entity';
 import { Repository } from 'typeorm';
-import { CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
+import {  AppointmentDto, CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 
 @Injectable()
 export class StudentsService {
@@ -12,6 +12,7 @@ export class StudentsService {
   @InjectRepository(OfferedClubs) private offeredClubsRepo: Repository<OfferedClubs>,
   @InjectRepository(RegisteredCourse) private registeredCourseRepo: Repository<RegisteredCourse>,
   @InjectRepository(JoinCLub) private joinClubRepo: Repository<JoinCLub>,
+  @InjectRepository(Appointment) private appointmentRepo: Repository<Appointment>
   ) {}
   
 
@@ -72,5 +73,7 @@ export class StudentsService {
     return this.joinClubRepo.save(joinClubDto);
   }
 
-
+  async createAppointment(appointmentDto: AppointmentDto) {
+    return this.appointmentRepo.save(appointmentDto);
+  }
 }

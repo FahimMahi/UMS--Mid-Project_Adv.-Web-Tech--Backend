@@ -137,4 +137,20 @@ export class JoinCLub{
   clubName: string;
 }
 
+@Entity("appoinment")
+export class Appointment{
+  @PrimaryGeneratedColumn()
+  id: string;
 
+  @Column()
+  @IsNotEmpty()
+  userName: string;
+
+  @Column()
+  @IsNotEmpty()
+  teacherName: string;
+
+  @Column({type: 'timestamp'})
+  @IsNotEmpty()
+  date: Date;
+}
