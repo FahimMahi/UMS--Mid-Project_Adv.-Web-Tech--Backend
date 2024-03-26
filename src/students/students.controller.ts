@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CreateStudentsDto, OfferedCoursesDto, UpdateStudentsDto } from './students.dto';
-import { OfferedCoursesEntity } from './offeredCourse/course.entity';
+import { CreateStudentsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
+import { OfferedCoursesEntity } from './students.entity';
+
 
 
 @Controller('students')
@@ -29,5 +30,11 @@ export class StudentsController {
   @Get('offeredcourse/:semister')
   searchCodeBySemister(@Param('semister') semister: string): Promise<OfferedCoursesEntity[]> {
    return this.studentsService.searchCourseBySemister(semister);
+  }
+
+  @Post('applyparking')
+    applyParking(@Body() parking: ParkingDto): Promise<ParkingDto>{
+      return this.studentsService.applyParking(parking);
+    
   }
 }

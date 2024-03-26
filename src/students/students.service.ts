@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StudentsEntity } from './students.entity';
+import { StudentsEntity, OfferedCoursesEntity, ParkingEntity  } from './students.entity';
 import { Repository } from 'typeorm';
-import { CreateStudentsDto, OfferedCoursesDto, UpdateStudentsDto } from './students.dto';
-import { OfferedCoursesEntity } from './offeredCourse/course.entity';
+import { CreateStudentsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
 
 @Injectable()
 export class StudentsService {
-  constructor(@InjectRepository(StudentsEntity) private studentsRepo: Repository<StudentsEntity>,@InjectRepository(OfferedCoursesEntity) private courseRepo: Repository<OfferedCoursesEntity>) {}
+  constructor(@InjectRepository(StudentsEntity) private studentsRepo: Repository<StudentsEntity>,@InjectRepository(OfferedCoursesEntity) private courseRepo: Repository<OfferedCoursesEntity>,
+  @InjectRepository(ParkingEntity) private parkingRepo: Repository<ParkingEntity>
+  ) {}
   
 
   createStudents(createStudents: CreateStudentsDto): Promise<CreateStudentsDto> {
@@ -25,4 +26,9 @@ export class StudentsService {
   searchCourseBySemister(semister: string): Promise<OfferedCoursesEntity[]>{
   return this.courseRepo.find({where: {semister}})
   }
+
+  applyParking(parking: ParkingDto): Promise<ParkingDto> {
+    return this.parkingRepo.save(parking);
+  }
+
 }

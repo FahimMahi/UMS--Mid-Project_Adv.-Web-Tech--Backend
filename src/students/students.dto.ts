@@ -47,3 +47,11 @@ export class OfferedCoursesDto{
   @IsNotEmpty()
   semister: string;
 }
+
+export class ParkingDto{
+  @IsNotEmpty()
+  userName: string;
+
+  @IsNotEmpty()
+  vehicle: string;
+}

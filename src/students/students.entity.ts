@@ -26,3 +26,35 @@ export class StudentsEntity{
   @MinLength(8)
   password: string;
 }
+
+@Entity("courses")
+export class OfferedCoursesEntity{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseCode: string;
+
+  @Column()
+  @IsNotEmpty()
+  courseName: string;
+
+  @Column()
+  @IsNotEmpty()
+  semister: string;
+}
+
+@Entity("parking")
+export class ParkingEntity{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  userName: string;
+
+  @Column()
+  @IsNotEmpty()
+  vehicle: string;
+}
