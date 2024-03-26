@@ -69,3 +69,11 @@ export class CoreCurriculamDto{
   @IsNotEmpty()
   semister: string;
 }
+
+export class OfferedClubsDto{
+  @IsNotEmpty()
+  clubName: string;
+
+  @IsNotEmpty()
+  clubDescription: string;
+}

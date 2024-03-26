@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { CoreCurriculamDto, CreateStudentsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
-import { CoreCurriculam, OfferedCoursesEntity } from './students.entity';
+import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, UpdateStudentsDto } from './students.dto';
+import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity } from './students.entity';
 
 
 
@@ -46,5 +46,15 @@ export class StudentsController {
   @Get('findcurriculam')
   async findCurriculam(): Promise<CoreCurriculam[]>{
     return this.studentsService.findCurriculam();
+  }
+
+  @Post('createclubs')
+  createOfferedCLubs(@Body() createClubs: OfferedClubsDto): Promise<OfferedClubsDto>{
+    return this.studentsService.createOfferedClubs(createClubs);
+  }
+
+  @Get('findclubs')
+  async findClubs(): Promise<OfferedClubs[]>{
+    return this.studentsService.findClubs();
   }
 }

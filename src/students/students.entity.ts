@@ -80,3 +80,17 @@ export class CoreCurriculam{
   @IsNotEmpty()
   semister: string;
 }
+
+@Entity("offeredClubs")
+export class OfferedClubs{
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Column()
+  @IsNotEmpty()
+  clubName: string;
+
+  @Column()
+  @IsNotEmpty()
+  clubDescription: string;
+}
