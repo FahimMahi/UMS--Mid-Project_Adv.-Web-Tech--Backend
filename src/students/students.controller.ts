@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity } from './students.entity';
@@ -93,7 +93,12 @@ export class StudentsController {
         if (!file) {
             throw new BadRequestException('Assignment file is required');
         }
-        console.log(file);
+        
+    }
+
+    @Get('/viewassignment/:name')
+    getImages(@Param('name') name:string, @Res() res) {
+        res.sendFile(name,{ root: './students/uploads' })
     }
 
 }
