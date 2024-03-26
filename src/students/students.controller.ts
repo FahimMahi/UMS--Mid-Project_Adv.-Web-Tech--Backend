@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CoreCurriculamDto, CreateStudentsDto, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity } from './students.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MulterError, diskStorage } from 'multer';
 
 
 
@@ -67,4 +69,31 @@ export class StudentsController {
   async findRegisteredStudents() {
     return this.studentsService.findRegisteredStudents();
   }
+
+  @Post('uploadassignment')
+    @UsePipes(new ValidationPipe())
+    @UseInterceptors(FileInterceptor('assignmentfile',
+    { 
+        fileFilter: (req, file, cb) => {
+            if (file.originalname.match(/^.*\.(jpg|png|jpeg|pdf)$/))
+            cb(null, true);
+        else {
+            cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        }
+        },
+        limits: { fileSize: 10 * 1024 * 1024 },
+        storage:diskStorage({
+        destination: './students/uploads',
+        filename: function (req, file, cb) {
+            cb(null,Date.now()+file.originalname)
+        },
+        })
+    }))
+    uploadFile(@UploadedFile() file: Express.Multer.File) {
+        if (!file) {
+            throw new BadRequestException('Assignment file is required');
+        }
+        console.log(file);
+    }
+
 }
