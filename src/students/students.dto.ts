@@ -105,3 +105,11 @@ export class AppointmentDto{
   @IsNotEmpty()
   date: Date;
 }
+
+export class ApplyHostelDto{
+  @IsNotEmpty()
+  userName: string;
+
+  @IsNotEmpty()
+  roomNo: string;
+}

@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("students")
 export class StudentsEntity{
@@ -28,6 +28,10 @@ export class StudentsEntity{
 
   @OneToMany(() => RegisteredCourse, (registerCourse)=> registerCourse.students)
   registerCourse: RegisteredCourse[]
+
+  // @OneToOne(() => Appointment, (appoinment) => appoinment.students)
+  // @JoinColumn()
+  // appoinment: Appointment;
 }
 
 @Entity("registerCourse")
@@ -140,7 +144,7 @@ export class JoinCLub{
 @Entity("appoinment")
 export class Appointment{
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   @IsNotEmpty()
@@ -153,4 +157,23 @@ export class Appointment{
   @Column({type: 'timestamp'})
   @IsNotEmpty()
   date: Date;
+
+  // @OneToOne(() => StudentsEntity, (students) => students.appoinment)
+  
+  // students: StudentsEntity;
+}
+
+
+@Entity("hostel")
+export class ApplyHostel{
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  @IsNotEmpty()
+  userName: string;
+
+  @Column()
+  @IsNotEmpty()
+  roomNo: string;
 }

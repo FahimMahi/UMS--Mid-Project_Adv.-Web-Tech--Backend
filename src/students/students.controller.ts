@@ -1,6 +1,6 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Patch, Post, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { StudentsService } from './students.service';
-import { AppointmentDto, CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
+import { ApplyHostelDto, AppointmentDto, CoreCurriculamDto, CreateStudentsDto, JoinClub, OfferedClubsDto, OfferedCoursesDto, ParkingDto, RegisteredCourseDto, UpdateStudentsDto } from './students.dto';
 import { CoreCurriculam, OfferedClubs, OfferedCoursesEntity, RegisteredCourse } from './students.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
@@ -30,8 +30,12 @@ export class StudentsController {
   }
 
   @Get('offeredcourse/:semister')
-  searchCodeBySemister(@Param('semister') semister: string): Promise<OfferedCoursesEntity[]> {
-   return this.studentsService.searchCourseBySemister(semister);
+  async searchCodeBySemister(@Param('semister') semister: string): Promise<OfferedCoursesEntity[]> {
+    const courses = await this.studentsService.searchCourseBySemister(semister);
+    if (!courses || courses.length === 0) {
+      throw new NotFoundException(`No courses found for semester ${semister}`);
+    }
+    return courses;
   }
 
   @Post('applyparking')
@@ -119,5 +123,29 @@ export class StudentsController {
   @UsePipes(ValidationPipe)
   createAppointment(@Body() appointmentDto: AppointmentDto): Promise<AppointmentDto>{
     return this.studentsService.createAppointment(appointmentDto);
+  }
+
+  @Get('appointment/:id')
+  async getAppointmentDetails(@Param('id') id: number){
+    const appointment = await this.studentsService.getAppointmentDetails(id);
+    if (!appointment) {
+      throw new NotFoundException(`Appointment with ID ${id} not found`);
+    }
+    return appointment;
+  }
+
+  @Post('joinhostel')
+  @UsePipes(ValidationPipe)
+  joinHostel(@Body() joinHostelDto: ApplyHostelDto): Promise<ApplyHostelDto> {
+    return this.studentsService.joinHostel(joinHostelDto);
+  }
+
+  @Get('viewhostel/:id')
+  async getHostelDetails(@Param('id') id: number) {
+    const viewHostel = await this.studentsService.getHostelDetails(id);
+    if (!viewHostel) {
+      throw new NotFoundException(`Appointment with ID ${id} not found`);
+    }
+    return viewHostel;
   }
 }
