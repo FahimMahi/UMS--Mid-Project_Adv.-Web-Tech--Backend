@@ -5,9 +5,7 @@ import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-<<<<<<< HEAD
   await app.listen(3000); 
-=======
   app.use(
     session({
     secret: 'my-secret',
@@ -26,6 +24,5 @@ async function bootstrap() {
       credentials: true,
   });
   await app.listen(3000);
->>>>>>> parent of d784877 (Revert "Merge branch 'FahimMahi:main' into main")
 }
 bootstrap();
