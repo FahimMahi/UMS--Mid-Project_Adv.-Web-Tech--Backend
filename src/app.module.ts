@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModule } from './admin/admin.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { StudentsModule } from './students/students.module';
 
 @Module({
   imports: [AdminModule, TypeOrmModule.forRoot(
@@ -10,11 +11,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: '2222',
-    database: 'UMS',//Change to your database name
+    password: '665566Ab',
+    database: 'UMS',
     autoLoadEntities: true,
     synchronize: true,
-    } ),
+    } ), StudentsModule,
     ],
   controllers: [AppController],
   providers: [AppService],
