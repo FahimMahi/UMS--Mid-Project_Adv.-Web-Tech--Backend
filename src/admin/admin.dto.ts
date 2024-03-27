@@ -1,4 +1,5 @@
-import { IsBoolean, IsDate, IsEmail, IsInt, IsNotEmpty, IsNumberString, IsOptional, IsPhoneNumber, IsString, IsStrongPassword, Matches, Validate } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayNotEmpty, ArrayUnique, IsArray, IsBoolean, IsDate, IsDateString, IsDecimal, IsEmail, IsEnum, IsISBN, IsInt, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsPhoneNumber, IsString, IsStrongPassword, IsUrl, Length, Matches, Max, MaxLength, Min, Validate, ValidateNested } from "class-validator";
 
 export class AdminDTO{
     @IsNotEmpty({message: 'Please enter a valid name'}) 
@@ -6,7 +7,7 @@ export class AdminDTO{
     name:string;
     @IsString()
     address:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     @IsEmail()
@@ -20,7 +21,7 @@ export class CreateStudentDto {
     name:string;
 
     @IsNotEmpty()
-    @IsInt()
+    @IsNumber()
     id:number;
     
     @IsNotEmpty()
@@ -31,9 +32,7 @@ export class CreateStudentDto {
     @Matches(/^018-\d{7}$/, { message: 'Phone number must match format 018-xxxxxxx' })
     phoneNumber: string;
 
-    @IsNotEmpty()
-    @IsInt()
-    age:number;
+    
 
     @IsNotEmpty()
     @IsString()
@@ -61,7 +60,7 @@ export class CreateStudentDto {
 
 
 
-    // @IsDate()
+    // // @IsDate()
     // admissiondate:string;
 }
 
@@ -69,11 +68,11 @@ export class CreateTeacherDto {
     @IsNotEmpty({message: 'Please enter a valid name'}) 
     @IsString()
     name:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     address:string;
-    @IsInt()
+    @IsNumber()
     age:number;
     
     @IsNotEmpty()
@@ -101,7 +100,7 @@ export class CreateStaffDto {
     @IsNotEmpty({message: 'Please enter a valid name'}) 
     @IsString()
     name:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     address:string;
@@ -109,7 +108,7 @@ export class CreateStaffDto {
     @IsNotEmpty()
     @Matches(/^018-\d{7}$/, { message: 'Phone number must match format 018-xxxxxxx' })
     phoneNumber: string;
-    @IsInt()
+    @IsNumber()
     age:number;
     @IsNotEmpty()
     @IsString()
@@ -133,7 +132,7 @@ export class CreateAdminDto {
     @IsNotEmpty({message: 'Please enter a valid name'}) 
     @IsString()
     name:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     address:string;
@@ -141,7 +140,7 @@ export class CreateAdminDto {
     @IsNotEmpty()
     @Matches(/^018-\d{7}$/, { message: 'Phone number must match format 018-xxxxxxx' })
     phoneNumber: string;
-    @IsInt()
+    @IsNumber()
     age:number;
     @IsNotEmpty()
     @IsString()
@@ -158,88 +157,38 @@ export class CreateAdminDto {
 
 }
 
-export class AdminInfo {
-    @IsOptional()
-    // @IsNotEmpty()
-    @IsString()
-    ad_name?: string | null;;
-
-    // @IsNotEmpty()
-    // @IsString()
-    // ad_username:string;
-    
-    // @IsNotEmpty()
-    // @IsString()
-    // ad_address:string;
-    
-    @IsNotEmpty()
-    // @Matches(/^018-\d{8}$/, { message: 'Phone number must match format 018-xxxxxxxx' })
-    
-    @IsNumberString() 
-    ad_phoneNumber: string;
-    
-    // @IsNotEmpty()
-    // // @IsInt()
-    // ad_age:number;
-    
-    // @IsNotEmpty()
-    // @IsString()
-    // @IsEmail()
-    // // @Matches(/.*@.*\.xyz$/, { message: 'Email address must end with .xyz domain' })
-    // @Matches(/^.+@aiub\.edu$/, { message: 'Email address must belong to aiub.edu domain' })
-    // ad_email: string;
-    
-    // @IsNotEmpty()
-    // @IsString()
-    // ad_designation:string;
-
-    // @IsNotEmpty()
-    // // // @IsString()
-    // // @IsStrongPassword()
-    // ad_password: string;
-
-    @IsNotEmpty()
-    @IsBoolean()
-    isActive: boolean = true; 
-
-    // @IsNotEmpty()
-    // @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
-    // ad_nid: number;
-    
-    // @IsNotEmpty()
-    // filename:string;
-}
-
 export class StudentInfo {
+    @IsNotEmpty()
     @IsString()
     name:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     address:string;
     @IsPhoneNumber()
     phone:number;
-    @IsInt()
+    @IsNumber()
     age:number;
     @IsString()
     department:string;
     @IsString()
     @IsEmail()
     email:string;
+    @IsNotEmpty()
     @IsStrongPassword()
     password:string;
-    // @IsDate()
+    // // @IsDate()
     // admissiondate:string;
 }
 
 export class TeacherInfo {
     @IsString()
     name:string;
-    @IsInt()
+    @IsNumber()
     id:number;
     @IsString()
     address:string;
-    @IsInt()
+    @IsNumber()
     age:number;
     @IsPhoneNumber()
     phone:number;
@@ -254,22 +203,250 @@ export class TeacherInfo {
     password:string;
 }
 
-export class StaffInfo {
+
+export class AdminInfo {
+    // @IsOptional()
+    @IsNotEmpty()
     @IsString()
     name:string;
-    @IsInt()
-    id:number;
+
+    @IsNotEmpty()
+    @IsString()
+    username:string;
+    
+    @IsNotEmpty()
     @IsString()
     address:string;
-    @IsPhoneNumber()
-    phone:number;
-    @IsInt()
-    age:number;
+    
+    @IsNotEmpty()
+    @Matches(/^01\d{9}$/, { message: 'Phone number must match format 01xxxxxxxxx' })
+    
+    @IsNumberString() 
+    phoneNumber: string;
+    
+    
+    
+    @IsNotEmpty()
     @IsString()
     @IsEmail()
-    email:string;
+    // @Matches(/.*@.*\.xyz$/, { message: 'Email address must end with .xyz domain' })
+    @Matches(/^.+@aiub\.edu$/, { message: 'Email address must belong to aiub.edu domain' })
+    email: string;
+
+    @IsNotEmpty()
+    @IsDateString()
+    dob: string;
+    
+    @IsNotEmpty()
     @IsString()
     designation:string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsStrongPassword()
+    password: string;
+
+    @IsNotEmpty()
+    @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
+    nid: number;
+    
+    // @IsNotEmpty()
+    // @IsUrl()
+    profilepic:string;
+}
+
+export class StudentRecordsDto {
+    @IsNotEmpty()
+    @Matches(/^\d{2}-\d{5}-\d{1}$/, { message: 'studentId must be in the format XX-XXXXX-X' })
+    studentId: string;
+  
+    @IsNotEmpty()
+    @IsString()
+    fullName: string;
+  
+    @IsNotEmpty()
+    @IsEmail()
+    @Matches(/^\d{2}-\d{5}-\d{1}@student\.aiub\.edu$/, { message: 'Email must be in the format XX-XXXXX-X@student.aiub.edu', })
+    email: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    address:string;
+
+    @IsNotEmpty()
+    @IsString()
+    fathersname:string;
+
+    @IsNotEmpty()
+    @IsString()
+    mothersname:string;
+
+    @IsNotEmpty()
+    @IsString()
+    guardianname:string;
+
+    @IsNotEmpty()
+    @Matches(/^01\d{9}$/, { message: 'GuardianPhone number must match format 01xxxxxxxxx' })
+    @IsNumberString() 
+    guardianphone:string;
+    
+    @IsNotEmpty()
+    @Matches(/^01\d{9}$/, { message: 'Student Phone number must match format 01xxxxxxxxx' })
+    @IsNumberString() 
+    phoneNumber: string;
+    
+    
+
+    @IsNotEmpty()
+    @IsOptional()
+    @IsString()
+    major: string;
+    
+    @IsNotEmpty()
+    @IsOptional()
+    @Min(0)
+    @Max(4)
+    gpa: number;
+
+    
+    @IsNotEmpty()
+    @IsDateString()
+    dob: string;
+
+    @IsNotEmpty()
     @IsStrongPassword()
     password:string;
+
+    @IsNotEmpty()
+    @IsDateString()
+    enrollmentDate: string;
+  
+    @IsOptional()
+    @IsDateString()
+    graduationDate: string;
+
+    
+    
+    profilepic:string;
+}
+
+export class FacultyInfo {
+    // @IsOptional()
+    @IsNotEmpty()
+    @IsString()
+    name:string;
+
+    @IsNotEmpty()
+    @IsString()
+    username:string;
+    
+    @IsNotEmpty()
+    @IsString()
+    address:string;
+    
+    @IsNotEmpty()
+    @Matches(/^01\d{9}$/, { message: 'Phone number must match format 01xxxxxxxxx' })
+    @IsNumberString() 
+    phoneNumber: string;
+    
+
+    @IsNotEmpty()
+    @IsDateString()
+    dob: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    // @Matches(/.*@.*\.xyz$/, { message: 'Email address must end with .xyz domain' })
+    @Matches(/^.+@aiub\.edu$/, { message: 'Email address must belong to aiub.edu domain' })
+    email: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    designation:string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsStrongPassword()
+    password: string;
+
+    @IsNotEmpty()
+    @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
+    nid: number;
+    
+    
+    profilepic:string;
+}
+
+export class StaffInfo {
+    @IsNotEmpty()
+    @IsString()
+    name:string;
+
+    @IsNotEmpty()
+    @IsString()
+    username:string;
+    
+    @IsNotEmpty()
+    @IsString()
+    address:string;
+    
+    @IsNotEmpty()
+    @Matches(/^01\d{9}$/, { message: 'Phone number must match format 01xxxxxxxxx' })
+    @IsNumberString() 
+    phoneNumber: string;
+
+    @IsNotEmpty()
+    @IsDateString()
+    dob: string;
+    
+    
+    
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    // @Matches(/.*@.*\.xyz$/, { message: 'Email address must end with .xyz domain' })
+    @Matches(/^.+@aiub\.edu$/, { message: 'Email address must belong to aiub.edu domain' })
+    email: string;
+    
+    @IsNotEmpty()
+    @IsString()
+    designation:string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsStrongPassword()
+    password: string;
+
+    @IsNotEmpty()
+    @Matches(/^[0-9]{10}$/, { message: 'Invalid Bangladeshi NID number format. Digit must be 10.' })
+    nid: number;
+    
+    
+    profilepic:string;
+}
+
+export class CourseDTO {
+    @IsNotEmpty()
+    @IsString()
+    code: string;
+  
+    @IsNotEmpty()
+    @IsString()
+    title: string;
+  
+    @IsNotEmpty()
+    @IsNumber()
+    credits: number;
+  
+}
+
+export class DepartmentDTO {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+  
+    @IsNotEmpty()
+    @IsString()
+    degree: string;
 }
